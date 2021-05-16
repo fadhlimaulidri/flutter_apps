@@ -1,40 +1,27 @@
-// Imports the Flutter Driver API.
-import 'package:flutter_driver/flutter_driver.dart';
-import 'package:test/test.dart';
+import 'dart:async';
+import 'package:flutter_gherkin/flutter_gherkin.dart';
+import 'package:gherkin/gherkin.dart';
+import 'package:glob/glob.dart';
+import 'steps/test_step.dart';
+// import 'hooks/hook_example.dart';
+// import 'steps/colour_parameter.dart';
+// import 'steps/given_I_pick_a_colour_step.dart';
+// import 'steps/tap_button_n_times_step.dart';
 
-void main() {
-  group('Counter App', () {
-    // First, define the Finders and use them to locate widgets from the
-    // test suite. Note: the Strings provided to the `byValueKey` method must
-    // be the same as the Strings we used for the Keys in step 1.
-    final counterTextFinder = find.byValueKey('counter');
-    final buttonFinder = find.byValueKey('increment');
-
-    FlutterDriver driver;
-
-    // Connect to the Flutter driver before running any tests.
-    setUpAll(() async {
-      driver = await FlutterDriver.connect();
-    });
-
-    // Close the connection to the driver after the tests have completed.
-    tearDownAll(() async {
-      if (driver != null) {
-        driver.close();
-      }
-    });
-
-    test('starts at 0', () async {
-      // Use the `driver.getText` method to verify the counter starts at 0.
-      expect(await driver.getText(counterTextFinder), "0");
-    });
-
-    test('increments the counter', () async {
-      // First, tap the button.
-      await driver.tap(buttonFinder);
-
-      // Then, verify the counter text is incremented by 1.
-      expect(await driver.getText(counterTextFinder), "1");
-    });
-  });
+Future<void> main() {
+  final config = FlutterTestConfiguration()
+    // ..features = [RegExp('features/*.*.feature')]
+    ..features = [Glob(r"test_driver/features/**.feature")]
+    ..reporters = [
+      ProgressReporter(),
+      TestRunSummaryReporter(),
+      JsonReporter(path: './report.json')
+    ] // you can include the "StdoutReporter()" without the message level parameter for verbose log information
+    // ..hooks = [HookExample()]
+    // ..stepDefinitions = [TapButtonNTimesStep(), GivenIPickAColour()]
+    // ..customStepParameterDefinitions = [ColourParameter()]
+    ..restartAppBetweenScenarios = true
+    ..targetAppPath = "test_driver/app.dart";
+    // ..tagExpression = "@smoke" // uncomment to see an example of running scenarios based on tag expressions
+  return GherkinRunner().execute(config);
 }
