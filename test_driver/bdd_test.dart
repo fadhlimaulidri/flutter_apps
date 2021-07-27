@@ -3,10 +3,12 @@ import 'package:flutter_gherkin/flutter_gherkin.dart';
 import 'package:gherkin/gherkin.dart';
 import 'package:glob/glob.dart';
 import 'steps/initial_state_of_app.dart';
-// import 'steps/I_see_value_step.dart';
-// import 'steps/I_click_subtract.dart';
+import 'hooks/screenshot_on_failed_step_hook.dart';
+
+import 'package:flutter_driver/flutter_driver.dart';
 
 Future<void> main() {
+  FlutterDriver driver;
   final config = FlutterTestConfiguration()
     ..features = [Glob(r"test_driver/features/**.feature")]
     ..reporters = [
@@ -15,7 +17,7 @@ Future<void> main() {
       JsonReporter(path: './report.json')
     ] // you can include the "StdoutReporter()" without the message level parameter for verbose log information
     ..hooks = [
-      AttachScreenshotOnFailedStepHook()
+      ScreenshotOnFailedStepHook()
     ]
     ..stepDefinitions = [
       InitialStateOfApp()
