@@ -1,6 +1,7 @@
 // Imports the Flutter Driver API.
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
+import 'dart:io';
 
 void main() {
   group('Counter App', () {
@@ -15,6 +16,7 @@ void main() {
     // Connect to the Flutter driver before running any tests.
     setUpAll(() async {
       driver = await FlutterDriver.connect();
+
     });
 
     // Close the connection to the driver after the tests have completed.
@@ -26,15 +28,20 @@ void main() {
 
     test('starts at 0', () async {
       // Use the `driver.getText` method to verify the counter starts at 0.
-      expect(await driver.getText(counterTextFinder), "0");
+      // expect(await driver.getText(counterTextFinder), "0");
+
+      // take screenshot
+      final List<int> pixels = await driver.screenshot();
+      final File file = File("test_driver/tmp/scree.png");
+      await file.writeAsBytes(pixels);
     });
 
     test('increments the counter', () async {
       // First, tap the button.
-      await driver.tap(buttonFinder);
+      // await driver.tap(buttonFinder);
 
       // Then, verify the counter text is incremented by 1.
-      expect(await driver.getText(counterTextFinder), "1");
+      // expect(await driver.getText(counterTextFinder), "1");
     });
   });
 }
